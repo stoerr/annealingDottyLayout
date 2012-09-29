@@ -15,7 +15,7 @@ class UndirectedGraph {
 
   def size: Int = nodes.size
 
-  def neighbors(node: String): ArrayBuffer[String] = neighborMap.get(node).get
+  def neighbors(node: String): ArrayBuffer[String] = neighborMap(node)
 
   def addEdge(n1: String, n2: String) {
     giveNeighbors(n1) += n2
@@ -24,16 +24,8 @@ class UndirectedGraph {
     nodes += n2
   }
 
-  private def giveNeighbors(n: String): mutable.ArrayBuffer[String] = {
-    neighborMap.get(n) match {
-      case Some(neighbors) => neighbors
-      case None => {
-        val neighbors = new mutable.ArrayBuffer[String]()
-        neighborMap += n -> neighbors
-        neighbors
-      }
-    }
-  }
+  private def giveNeighbors(n: String): mutable.ArrayBuffer[String] =
+    neighborMap.getOrElseUpdate(n, new mutable.ArrayBuffer[String]())
 
 }
 

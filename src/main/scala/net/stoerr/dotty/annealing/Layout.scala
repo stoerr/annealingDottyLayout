@@ -4,7 +4,9 @@ import scala.collection.mutable
 import scala.util.Random
 import scala.collection.mutable.ArrayBuffer
 
-case class Point(x: Int, y: Int)
+case class Point(x: Int, y: Int) {
+  def distance(p: Point): Double = math.sqrt((p.x - x) * (p.x - x) + (p.y - y) * (p.y - y))
+}
 
 /**
  * @author <a href="http://www.stoerr.net/">Hans-Peter Stoerr</a>
@@ -23,30 +25,34 @@ class Layout(graph: UndirectedGraph, xmax: Int, ymax: Int) {
   private def scale(p: Point): Point =
     Point((xmax * 1.0 / gridsize * (p.x + 0.5)).toInt, (ymax * 1.0 / gridsize * (p.y + 0.5)).toInt)
 
-  def position(node: String): Point = scale(positions.get(node).get)
+  def position(node: String): Point = scale(positions(node))
 
-  private val rnd = new Random
+  protected val rnd = new Random(42)
 
-  private def randompoint() = Point(rnd.nextInt(gridsize), rnd.nextInt(gridsize))
+  protected def randompoint() = Point(rnd.nextInt(gridsize), rnd.nextInt(gridsize))
 
-  private def put(node: String, p: Point) {
+  def put(node: String, p: Point) {
     positions += node -> p
     contents += p -> node
   }
 
-  {
-    for (node <- graph.nodes) {
-      var isput = false
-      while (!isput) {
-        val p = randompoint()
-        contents.get(p) match {
-          case None =>
-            isput = true
-            put(node, p)
-          case Some(_) =>
-        }
+  def move(node: String, from: Point, to: Point) {
+    contents remove from
+    put(node, to)
+  }
+
+  for (node <- graph.nodes) {
+    var isput = false
+    while (!isput) {
+      val p = randompoint()
+      contents.get(p) match {
+        case None =>
+          isput = true
+          put(node, p)
+        case Some(_) =>
       }
     }
   }
+
 }
 

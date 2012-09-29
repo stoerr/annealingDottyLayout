@@ -11,7 +11,7 @@ object DisplayGraph extends SimpleSwingApplication {
   val xmax = 1414
 
   val graph = UndirectedGraph.makeLine(20)
-  val layout = new Layout(graph, xmax, ymax)
+  val layout = new AnnealingLayout(graph, xmax, ymax)
 
   def top: MainFrame = new MainFrame {
     title = "Display the graph"
