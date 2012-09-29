@@ -1,7 +1,6 @@
 package net.stoerr.dotty.annealing
 
 import swing._
-import java.awt.Color
 
 /**
  * @author <a href="http://www.stoerr.net/">Hans-Peter Stoerr</a>
@@ -11,14 +10,22 @@ object DisplayGraph extends SimpleSwingApplication {
   val ymax = 1000
   val xmax = 1414
 
-  def top = new MainFrame {
+  val graph = UndirectedGraph.makeLine(20)
+  val layout = new Layout(graph, xmax, ymax)
+
+  def top: MainFrame = new MainFrame {
     title = "Display the graph"
-    minimumSize = new Dimension(xmax+100,ymax+100)
+    minimumSize = new Dimension(xmax + 50, ymax + 50)
     contents = new Component {
-      override def paintComponent(g: Graphics2D) = {
+      override def paintComponent(g: Graphics2D) {
         super.paintComponent(g)
-        g.setColor(Color.black)
-        g.drawLine(0,0,xmax, ymax)
+        for (node <- graph.nodes) {
+          val nodep = layout.position(node)
+          for (neighbor <- graph.neighbors(node)) {
+            val neighborp = layout.position(neighbor)
+            g.drawLine(nodep.x, nodep.y, neighborp.x, neighborp.y)
+          }
+        }
       }
     }
   }

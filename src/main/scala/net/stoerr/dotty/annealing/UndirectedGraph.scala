@@ -1,6 +1,7 @@
 package net.stoerr.dotty.annealing
 
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * Undirected Graph with Strings as nodes.
@@ -10,21 +11,41 @@ import scala.collection.mutable
 class UndirectedGraph {
 
   val neighborMap = new mutable.HashMap[String, mutable.ArrayBuffer[String]]
+  val nodes = new mutable.HashSet[String]
 
-  def addEdge(n1 : String, n2 : String) : Unit = {
+  def size: Int = nodes.size
+
+  def neighbors(node: String): ArrayBuffer[String] = neighborMap.get(node).get
+
+  def addEdge(n1: String, n2: String) {
     giveNeighbors(n1) += n2
     giveNeighbors(n2) += n1
+    nodes += n1
+    nodes += n2
   }
 
-  private def giveNeighbors(n : String) : mutable.ArrayBuffer[String] = {
+  private def giveNeighbors(n: String): mutable.ArrayBuffer[String] = {
     neighborMap.get(n) match {
       case Some(neighbors) => neighbors
       case None => {
         val neighbors = new mutable.ArrayBuffer[String]()
-        neighborMap.put(n, neighbors)
+        neighborMap += n -> neighbors
         neighbors
       }
     }
   }
 
+}
+
+object UndirectedGraph {
+  def makeLine(count: Int): UndirectedGraph = {
+    val graph = new UndirectedGraph
+    var last = "0"
+    for (i <- 1 to count) {
+      var next = "" + i
+      graph.addEdge(last, next)
+      last = next
+    }
+    graph
+  }
 }
