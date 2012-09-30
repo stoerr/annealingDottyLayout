@@ -33,10 +33,20 @@ object UndirectedGraph {
   def makeLine(count: Int): UndirectedGraph = {
     val graph = new UndirectedGraph
     var last = "0"
-    for (i <- 1 to count) {
+    for (i <- 1 until count) {
       var next = "" + i
       graph.addEdge(last, next)
       last = next
+    }
+    graph
+  }
+
+  def makeSquare(n: Int): UndirectedGraph = {
+    val graph = new UndirectedGraph
+    def v(i: Int, j: Int) = i + "," + j
+    for (i <- 0 until n; j <- 0 until n - 1) {
+      graph.addEdge(v(i, j), v(i, j + 1))
+      graph.addEdge(v(j, i), v(j + 1, i))
     }
     graph
   }

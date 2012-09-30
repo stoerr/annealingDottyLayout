@@ -16,8 +16,9 @@ class Layout(graph: UndirectedGraph, xmax: Int, ymax: Int) {
 
   val gridsize = math.sqrt(graph.size * 1.5).toInt
 
-  val points = new ArrayBuffer[Point]
-  for (i <- 0 to gridsize; j <- 0 to gridsize) points += Point(i, j)
+  val points = new ArrayBuffer[Point] {
+    for (i <- 0 until gridsize; j <- 0 until gridsize) this += Point(i, j)
+  }
 
   val positions = new mutable.HashMap[String, Point]
   val contents = new mutable.HashMap[Point, String]
@@ -29,7 +30,7 @@ class Layout(graph: UndirectedGraph, xmax: Int, ymax: Int) {
 
   protected val rnd = new Random(42)
 
-  protected def randompoint() = Point(rnd.nextInt(gridsize), rnd.nextInt(gridsize))
+  protected def randompoint() = points(rnd.nextInt(points.size)) // Point(rnd.nextInt(gridsize), rnd.nextInt(gridsize))
 
   def put(node: String, p: Point) {
     positions += node -> p

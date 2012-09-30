@@ -6,33 +6,52 @@ package net.stoerr.dotty.annealing
  */
 class AnnealingLayout(graph: UndirectedGraph, xmax: Int, ymax: Int) extends Layout(graph, xmax, ymax) {
 
-  /** Distance of the node from its neighbors when it is at realposition */
-  def neighborSumDistance(node: String, realposition: Point): Double =
-    (graph.neighbors(node) map (positions(_)) map (realposition distance _) fold 0.0)(_ + _)
+  /** Distance of the node from its neighbors when it is at realposition except neighbors at ignoredposition */
+  def neighborSumDistance(node: String, realposition: Point, ignoredposition: Point): Double =
+    (graph.neighbors(node) map (positions(_)) filter (ignoredposition != _) map (realposition distance _) fold 0.0)(_ + _)
 
   def improvement(node: String, oldpos: Point, newpos: Point): Double =
-    neighborSumDistance(node, oldpos) - neighborSumDistance(node, newpos)
+    neighborSumDistance(node, oldpos, newpos) - neighborSumDistance(node, newpos, oldpos)
 
   var worseningSwitchProbability = 0.0
 
   def takeit(improvement: Double): Boolean = if (improvement > 0) true
   else rnd.nextDouble() < worseningSwitchProbability
 
-  for (i <- 0 to 5000000) {
-    val p1 = randompoint()
-    val p2 = randompoint()
-    (contents.get(p1), contents.get(p2)) match {
-      case (Some(n1), Some(n2)) =>
-        if (takeit(improvement(n1, p1, p2) + improvement(n2, p2, p1))) {
-          put(n1, p2)
-          put(n2, p1)
-        }
-      case (Some(n1), None) =>
-        if (takeit(improvement(n1, p1, p2))) move(n1, p1, p2)
-      case (None, Some(n2)) =>
-        if (takeit(improvement(n2, p2, p1))) move(n2, p2, p1)
-      case (None, None) =>
+  {
+    var swapsdone = true
+    for (i <- 1 to 100 if swapsdone) swapsdone = runOneSecond()
+  }
+
+
+  def runOneSecond(): Boolean = {
+    var swaps = 0
+    val begin = System.currentTimeMillis()
+    while (System.currentTimeMillis() - begin < 1000) {
+      val p1 = randompoint()
+      val p2 = randompoint()
+      (contents.get(p1), contents.get(p2)) match {
+        case (Some(n1), Some(n2)) =>
+          if (n1 != n2 && takeit(improvement(n1, p1, p2) + improvement(n2, p2, p1))) {
+            put(n1, p2)
+            put(n2, p1)
+            swaps += 1
+          }
+        case (Some(n1), None) =>
+          if (takeit(improvement(n1, p1, p2))) {
+            move(n1, p1, p2)
+            swaps += 1
+          }
+        case (None, Some(n2)) =>
+          if (takeit(improvement(n2, p2, p1))) {
+            move(n2, p2, p1)
+            swaps += 1
+          }
+        case (None, None) =>
+      }
     }
+    println("Swaps: " + swaps)
+    swaps != 0
   }
 
 }

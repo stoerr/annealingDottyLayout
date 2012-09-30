@@ -10,7 +10,7 @@ object DisplayGraph extends SimpleSwingApplication {
   val ymax = 1000
   val xmax = 1414
 
-  val graph = UndirectedGraph.makeLine(20)
+  val graph = UndirectedGraph.makeSquare(10)
   val layout = new AnnealingLayout(graph, xmax, ymax)
 
   def top: MainFrame = new MainFrame {
