@@ -18,9 +18,17 @@ class AnnealingLayout(graph: UndirectedGraph, xmax: Int, ymax: Int) extends Layo
   def takeit(improvement: Double): Boolean = if (improvement > 0) true
   else rnd.nextDouble() < worseningSwitchProbability
 
+  val runseconds = 10
+
   {
     var swapsdone = true
-    for (i <- 1 to 100 if swapsdone) swapsdone = runOneSecond()
+    val step = math.pow(10.0 * graph.size * graph.size, -1.0 / runseconds)
+    worseningSwitchProbability = step
+    for (i <- 1 to runseconds if swapsdone) {
+      println(worseningSwitchProbability)
+      swapsdone = runOneSecond()
+      worseningSwitchProbability *= step
+    }
   }
 
 
