@@ -1,17 +1,23 @@
-Graph layout with simulated annealing as a processor for dotty files
-====================================================================
+Graph layout with simulated annealing as a processor for Dotty files (for GraphViz)
+===================================================================================
 
-(In Progress - the layout works but no dotty file reading yet.)
+(In Progress - the layout works but no Dotty file reading yet.)
 
-This is a processor for dotty files that uses the simulated annealing algorithm
+This is a processor for Dotty files that uses the simulated annealing algorithm
 http://en.wikipedia.org/wiki/Simulated_annealing
 to layout a graph given as a dotty file that can then be rendered with GraphViz
 http://en.wikipedia.org/wiki/Graphviz
 
-The basic idea is that we put the points randomly on a rectangular grid that is
+Reason: Graphviz does an excellent job rendering many - especially hierarchical - graphs.
+If the graph is large, however, it often happens that the rendering is extremely wide
+and thus not printable. This rendering algorithm yields a graph that uses the space
+of a page much better by placing the nodes evenly spaced on a grid and just choosing the
+locations of the nodes on the grid such that the edge length is minimized.
+
+The basic idea is that we put the nodes randomly on a rectangular grid that is
 a little bit larger than the graph itself. Then we optimize the layout such that
-the cumulative length of all edges is minimized by swapping points. (That can be
-two points of the graph, or a point of the graph and an empty place in the grid.)
+the cumulative length of all edges is minimized by swapping grid points. (That can be
+two nodes of the graph, or a node of the graph and an empty place in the grid.)
 
 In each step two random points of the grid are chosen. We check whether swapping
 them reduces the length of the edges. If so we do swap them. If not - and that's
