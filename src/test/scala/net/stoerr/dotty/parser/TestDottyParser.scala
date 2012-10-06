@@ -26,9 +26,46 @@ class TestDottyParser extends DottyParser with FlatSpec with ShouldMatchers {
     evaluating(parsing(input)(p)) should produce[IllegalArgumentException]
   }
 
-  "The graph parser " should "yield an empty graph for empty" in {
+  "The nodedef parser" should "parse node definitions" in {
+    implicit val parser = nodedef
+    parsing("nodename;") should equal(NodeDef("nodename"))
+    parsing("\"string id\";") should equal(NodeDef("string id"))
+    parsing("node[bla=blu];") should equal(NodeDef("node", Map("bla" -> "blu")))
+    parsing("\"node\"[bla=\"blu\"];") should equal(NodeDef("node", Map("bla" -> "blu")))
+  }
+
+  "The edgedef parser" should "parse edge definitions" in {
+    implicit val parser = edgedef
+    parsing("a -> b;") should equal(EdgeDef("a", "b"))
+    parsing("\"a\" -- \"b\" [bla=blu, blef=\"hu\"]") should
+      equal(EdgeDef("a", "b", Map("bla" -> "blu", "blef" -> "hu")))
+  }
+
+  "The graph parser" should "yield an empty graph for empty definitions" in {
     implicit val parser = dottyfile
-    parsing("graph{}") should equal(DottyGraph(false, false, None))
+    parsing("graph{}") should equal(DottyGraph(directed = false, name = None))
+    parsing("digraph{}") should equal(DottyGraph(directed = true, name = None))
+    parsing("digraph bla {}") should equal(DottyGraph(directed = true, name = Some("bla")))
+  }
+
+  it should "put all details of a file together" in {
+    implicit val parser = dottyfile
+    var file =
+      """
+        |digraph test {
+        |x[bla=blu];
+        |a->"b";
+        |c->d [ha=hu, x="y"]
+        |}
+      """.stripMargin
+    println(parsing(file).toString())
+    parsing(file).toString().replaceAll("\\s+", " ").trim should equal(
+      """digraph test {
+        |  x [bla="blu"];
+        |  a -> b;
+        |  c -> d [ha="hu", x="y"];
+        |}
+      """.stripMargin.replaceAll("\\s+", " ").trim)
   }
 
 }
