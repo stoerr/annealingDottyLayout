@@ -12,6 +12,8 @@ class UndirectedGraph {
 
   val neighborMap = new mutable.HashMap[String, mutable.ArrayBuffer[String]]
   val nodes = new mutable.HashSet[String]
+  var edges = 0
+  var maxEdgesPerNode = 0
 
   def size: Int = nodes.size
 
@@ -22,6 +24,8 @@ class UndirectedGraph {
     giveNeighbors(n2) += n1
     nodes += n1
     nodes += n2
+    edges += 1
+    maxEdgesPerNode = math.max(maxEdgesPerNode, math.max(giveNeighbors(n1).size, giveNeighbors(n2).size))
   }
 
   private def giveNeighbors(n: String): mutable.ArrayBuffer[String] =

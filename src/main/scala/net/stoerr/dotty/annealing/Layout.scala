@@ -14,7 +14,7 @@ case class Point(x: Int, y: Int) {
  */
 class Layout(graph: UndirectedGraph, xmax: Int, ymax: Int) {
 
-  val gridsize = math.sqrt(graph.size * 1.5).toInt
+  val gridsize = math.sqrt(graph.size * 1.3).toInt
 
   val points = new ArrayBuffer[Point] {
     for (i <- 0 until gridsize; j <- 0 until gridsize) this += Point(i, j)
