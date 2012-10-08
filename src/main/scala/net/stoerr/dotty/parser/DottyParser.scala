@@ -16,7 +16,9 @@ trait DottyParser extends JavaTokenParsers {
 
   def id: Parser[String] = ident | (stringLiteral ^^ (s => s.substring(1, s.length - 1)))
 
-  def dottyfile: Parser[DottyGraph] = ("graph" ^^^ (false) | "digraph" ^^^ (true)) ~ (id.? <~ "{") ~
+  def dottyfile: Parser[DottyGraph] = phrase(dottyfileinternal)
+
+  protected def dottyfileinternal: Parser[DottyGraph] = ("graph" ^^^ (false) | "digraph" ^^^ (true)) ~ (id.? <~ "{") ~
     graphdefline.* <~ "}" ^^ {
     case graphtype ~ id ~ lines => DottyGraph(graphtype, id,
       lines filter (_.isInstanceOf[NodeDef]) map (_.asInstanceOf[NodeDef]),

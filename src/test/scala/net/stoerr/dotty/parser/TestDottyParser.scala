@@ -58,7 +58,7 @@ class TestDottyParser extends DottyParser with FlatSpec with ShouldMatchers {
         |c->d [ha=hu, x="y"]
         |}
       """.stripMargin
-    println(parsing(file).toString())
+    // println(parsing(file).toString())
     parsing(file).toString().replaceAll("\\s+", " ").trim should equal(
       """digraph test {
         |  x [bla="blu"];

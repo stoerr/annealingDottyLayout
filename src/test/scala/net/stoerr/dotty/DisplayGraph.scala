@@ -1,6 +1,8 @@
-package net.stoerr.dotty.annealing
+package net.stoerr.dotty
 
-import swing._
+import java.awt.{Graphics2D, Dimension}
+import net.stoerr.dotty.annealing.{AnnealingLayout, UndirectedGraph}
+import scala.swing.{Component, MainFrame, SimpleSwingApplication}
 
 /**
  * @author <a href="http://www.stoerr.net/">Hans-Peter Stoerr</a>
