@@ -10,25 +10,27 @@ class AnnealingLayout(graph: UndirectedGraph, xmax: Int, ymax: Int) extends Layo
   def neighborSumDistance(node: String, realposition: Point, ignoredposition: Point): Double =
     (graph.neighbors(node) map (positions(_)) filter (ignoredposition != _) map (realposition distance _) fold 0.0)(_ + _)
 
-  def improvement(node: String, oldpos: Point, newpos: Point): Double =
-    neighborSumDistance(node, oldpos, newpos) - neighborSumDistance(node, newpos, oldpos)
+  def energydifference(node: String, oldpos: Point, newpos: Point): Double =
+    neighborSumDistance(node, newpos, oldpos) - neighborSumDistance(node, oldpos, newpos)
 
-  var worseningSwitchProbability = 0.0
+  var relativeTime = 0.0
+  var strategy: AnnealingStrategy = // new EnergyIndependentAnnealing(0.1 / (graph.size * graph.size))
+    new EnergyDependentAnnealing(math.max(xmax, ymax) * graph.maxEdgesPerNode, 0.1)
 
-  def takeit(improvement: Double): Boolean = if (improvement > 0) true
-  else rnd.nextDouble() < worseningSwitchProbability
+  def takeit(improvement: Double): Boolean = rnd.nextDouble() < strategy.admissionProbability(improvement, relativeTime)
 
   val runseconds = 10
 
   {
     var swapsdone = true
-    val step = math.pow(10.0 * graph.size * graph.size, -1.0 / runseconds)
-    worseningSwitchProbability = step
     for (i <- 1 to runseconds if swapsdone) {
-      println(worseningSwitchProbability)
+      println(relativeTime)
+      println(strategy.asInstanceOf[EnergyDependentAnnealing].halftime(relativeTime))
       swapsdone = runOneSecond()
-      worseningSwitchProbability *= step
+      relativeTime += 1.0 / runseconds
     }
+    strategy = new GreedyDescent
+    runOneSecond()
   }
 
 
@@ -40,18 +42,18 @@ class AnnealingLayout(graph: UndirectedGraph, xmax: Int, ymax: Int) extends Layo
       val p2 = randompoint()
       (contents.get(p1), contents.get(p2)) match {
         case (Some(n1), Some(n2)) =>
-          if (n1 != n2 && takeit(improvement(n1, p1, p2) + improvement(n2, p2, p1))) {
+          if (n1 != n2 && takeit(energydifference(n1, p1, p2) + energydifference(n2, p2, p1))) {
             put(n1, p2)
             put(n2, p1)
             swaps += 1
           }
         case (Some(n1), None) =>
-          if (takeit(improvement(n1, p1, p2))) {
+          if (takeit(energydifference(n1, p1, p2))) {
             move(n1, p1, p2)
             swaps += 1
           }
         case (None, Some(n2)) =>
-          if (takeit(improvement(n2, p2, p1))) {
+          if (takeit(energydifference(n2, p2, p1))) {
             move(n2, p2, p1)
             swaps += 1
           }
