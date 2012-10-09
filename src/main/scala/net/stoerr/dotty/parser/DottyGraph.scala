@@ -20,9 +20,9 @@ sealed trait GraphContentDef {
 }
 
 case class NodeDef(name: String, attrib: Map[String, String] = Map()) extends GraphContentDef {
-  override def toString() = "  " + name + attributesAsString(attrib) + ";\n"
+  override def toString() = "  \"" + name + '"' + attributesAsString(attrib) + ";\n"
 }
 
 case class EdgeDef(from: String, to: String, attrib: Map[String, String] = Map()) extends GraphContentDef {
-  def toString(directed: Boolean) = "  " + from + (if (directed) " -> " else " -- ") + to + attributesAsString(attrib) + ";\n"
+  def toString(directed: Boolean) = "  \"" + from + '"' + (if (directed) " -> " else " -- ") + '"' + to + '"' + attributesAsString(attrib) + ";\n"
 }

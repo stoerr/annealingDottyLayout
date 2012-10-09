@@ -1,10 +1,10 @@
 package net.stoerr.dotty.transformer
 
-import scala.io.Source
-import net.stoerr.dotty.parser.{EdgeDef, NodeDef, DottyGraph, DottyParser}
-import scala.util.parsing.input.CharSequenceReader
-import scala.collection.mutable
 import java.io.{FileOutputStream, OutputStreamWriter}
+import net.stoerr.dotty.parser.{EdgeDef, NodeDef, DottyGraph, DottyParser}
+import scala.collection.mutable
+import scala.io.Source
+import scala.util.parsing.input.CharSequenceReader
 
 /**
  * Removes names from a dotty file such that we can publish it without disclosing
@@ -14,7 +14,7 @@ import java.io.{FileOutputStream, OutputStreamWriter}
  */
 object DottyAnonymizer extends DottyParser {
 
-  val randomchars = " llan fair pwll gwyngyll gogerych wyrn drobwl lan tisilio gogo goch"
+  val randomchars = "-llanfairpwllgwyngyllgogerychwyrndrobwllantisiliogogogoch"
 
   def main(args: Array[String]) {
     val dottyfilecontent = Source.fromFile(args(0)).mkString
@@ -35,6 +35,7 @@ object DottyAnonymizer extends DottyParser {
     val out = new OutputStreamWriter(new FileOutputStream(args(1)))
     out.write(outgraph.toString())
     out.close()
+    println("anonymized " + args(0) + " to " + args(1))
   }
 
 }
