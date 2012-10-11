@@ -1,5 +1,6 @@
 package net.stoerr.dotty.annealing
 
+import java.io.{FileOutputStream, PrintWriter}
 import net.stoerr.dotty.parser.DottyParser
 import scala.io.Source
 import scala.util.parsing.input.CharSequenceReader
@@ -20,12 +21,16 @@ object DottyAnnealingCmd extends DottyParser {
       case NoSuccess(msg, charseq) => throw new IllegalArgumentException(
         "Could not parse '" + input + "': " + msg)
     }
-    val xmax = 8427 // points
-    val ymax = 5959 // points
-    val graph = new UndirectedGraph
-    dottygraph.edges foreach (edge => graph.addEdge(edge.from, edge.to))
-    val layout = new AnnealingLayout(graph, xmax, ymax) // includes layout computation
-    // val layoutednodes = graph.nodes map (dottygraph.nodes....  add pos="x,y" attribute to every node.
-    // val result = DottyGraph(dottygraph.directed, dottygraph.name, layoutednodes, dottygraph.edges)
+    // ??? What is the actual scaling factor? How can we wrap the labels?
+    // Probably there should also be more rows than columns.
+    val xmax = 8427 / 8 // 8427 points
+    val ymax = 5959 / 8 // 5959 points
+    val graph = LayoutToDotty.undirectedGraphFromDottyGraph(dottygraph)
+    val layout = new AnnealingLayout(graph, xmax, ymax) with LayoutToDotty // includes layout computation
+    val result = layout.extendDottyGraphWithPositions(dottygraph)
+    val stream = new PrintWriter(new FileOutputStream(outfile))
+    stream.println(result.toString())
+    stream.close()
+    println(result.toString())
   }
 }
