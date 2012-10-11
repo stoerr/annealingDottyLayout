@@ -4,7 +4,7 @@ package net.stoerr.dotty.annealing
  * @author <a href="http://www.stoerr.net/">Hans-Peter Stoerr</a>
  * @since 29.09.12
  */
-class AnnealingLayout(graph: UndirectedGraph, xmax: Int, ymax: Int) extends Layout(graph, xmax, ymax) {
+class AnnealingLayout(graph: UndirectedGraph, settings: LayoutSettings) extends Layout(graph, settings) {
 
   /** Distance of the node from its neighbors when it is at realposition except neighbors at ignoredposition */
   def neighborSumDistance(node: String, realposition: Point, ignoredposition: Point): Double =
@@ -15,7 +15,7 @@ class AnnealingLayout(graph: UndirectedGraph, xmax: Int, ymax: Int) extends Layo
 
   var relativeTime = 0.0
   var strategy: AnnealingStrategy = // new EnergyIndependentAnnealing(0.1 / (graph.size * graph.size))
-    new EnergyDependentAnnealing(math.max(xmax, ymax) * graph.maxEdgesPerNode, 0.1)
+    new EnergyDependentAnnealing(gridsize * graph.maxEdgesPerNode, 0.1)
 
   def takeit(improvement: Double): Boolean = rnd.nextDouble() < strategy.admissionProbability(improvement, relativeTime)
 

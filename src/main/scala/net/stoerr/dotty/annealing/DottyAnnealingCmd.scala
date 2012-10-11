@@ -21,12 +21,9 @@ object DottyAnnealingCmd extends DottyParser {
       case NoSuccess(msg, charseq) => throw new IllegalArgumentException(
         "Could not parse '" + input + "': " + msg)
     }
-    // ??? What is the actual scaling factor? How can we wrap the labels?
-    // Probably there should also be more rows than columns.
-    val xmax = 8427 / 8 // 8427 points
-    val ymax = 5959 / 8 // 5959 points
     val graph = LayoutXDotty.undirectedGraphFromDottyGraph(dottygraph)
-    val layout = new AnnealingLayout(graph, xmax, ymax) with LayoutXDotty // includes layout computation
+    val settings = new LayoutSettings()
+    val layout = new AnnealingLayout(graph, settings) with LayoutXDotty // includes layout computation
     val result = layout.extendDottyGraphWithPositions(dottygraph)
     val stream = new PrintWriter(new FileOutputStream(outfile))
     stream.println(result.toString())

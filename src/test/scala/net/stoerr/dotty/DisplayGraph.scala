@@ -1,7 +1,7 @@
 package net.stoerr.dotty
 
 import java.awt.{Graphics2D, Dimension}
-import net.stoerr.dotty.annealing.{AnnealingLayout, UndirectedGraph}
+import net.stoerr.dotty.annealing.{LayoutSettings, AnnealingLayout, UndirectedGraph}
 import scala.swing.{Component, MainFrame, SimpleSwingApplication}
 
 /**
@@ -12,8 +12,9 @@ object DisplayGraph extends SimpleSwingApplication {
   val ymax = 1000
   val xmax = 1414
 
-  val graph = UndirectedGraph.makeSquare(10)
-  val layout = new AnnealingLayout(graph, xmax, ymax)
+  val gridsize = 10
+  val graph = UndirectedGraph.makeSquare(gridsize)
+  val layout = new AnnealingLayout(graph, new LayoutSettings(xdist = xmax / gridsize, ydist = ymax / gridsize))
 
   def top: MainFrame = new MainFrame {
     title = "Display the graph"
