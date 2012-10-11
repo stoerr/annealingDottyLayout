@@ -25,12 +25,12 @@ object DottyAnnealingCmd extends DottyParser {
     // Probably there should also be more rows than columns.
     val xmax = 8427 / 8 // 8427 points
     val ymax = 5959 / 8 // 5959 points
-    val graph = LayoutToDotty.undirectedGraphFromDottyGraph(dottygraph)
-    val layout = new AnnealingLayout(graph, xmax, ymax) with LayoutToDotty // includes layout computation
+    val graph = LayoutXDotty.undirectedGraphFromDottyGraph(dottygraph)
+    val layout = new AnnealingLayout(graph, xmax, ymax) with LayoutXDotty // includes layout computation
     val result = layout.extendDottyGraphWithPositions(dottygraph)
     val stream = new PrintWriter(new FileOutputStream(outfile))
     stream.println(result.toString())
     stream.close()
-    println(result.toString())
+    // println(result.toString())
   }
 }

@@ -19,7 +19,7 @@ class AnnealingLayout(graph: UndirectedGraph, xmax: Int, ymax: Int) extends Layo
 
   def takeit(improvement: Double): Boolean = rnd.nextDouble() < strategy.admissionProbability(improvement, relativeTime)
 
-  val runseconds = 10
+  val runseconds = 5
 
   {
     var swapsdone = true

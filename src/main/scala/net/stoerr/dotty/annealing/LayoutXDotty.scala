@@ -7,26 +7,28 @@ import net.stoerr.dotty.parser.{NodeDef, DottyGraph}
  * @author <a href="http://www.stoerr.net/">Hans-Peter Stoerr</a>
  * @since 10.10.12
  */
-trait LayoutToDotty extends Layout {
+trait LayoutXDotty extends Layout {
 
   private def posattr(name: String) = {
     val pos = position(name)
     "pos" -> (pos.x + "," + pos.y)
   }
 
+  val widthattr = "width" -> "2"
+
   def extendDottyGraphWithPositions(graph: DottyGraph): DottyGraph = {
     val existingnodedefs = graph.nodes map {
-      node => NodeDef(node.name, node.attrib + posattr(node.name))
+      node => NodeDef(node.name, node.attrib + posattr(node.name) + widthattr)
     }
     val newnodedefs = (positions.keySet -- graph.nodes.map(_.name)) map {
-      name => NodeDef(name, Map(posattr(name)))
+      name => NodeDef(name, Map(posattr(name), widthattr))
     }
     DottyGraph(graph.directed, graph.name, existingnodedefs ++ newnodedefs, graph.edges)
   }
 
 }
 
-object LayoutToDotty {
+object LayoutXDotty {
 
   def undirectedGraphFromDottyGraph(dottygraph: DottyGraph): UndirectedGraph = {
     val graph = new UndirectedGraph
