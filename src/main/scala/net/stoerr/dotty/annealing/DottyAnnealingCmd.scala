@@ -24,10 +24,10 @@ object DottyAnnealingCmd extends DottyParser {
     val graph = LayoutXDotty.undirectedGraphFromDottyGraph(dottygraph)
     val settings = new LayoutSettings()
     val layout = new AnnealingLayout(graph, settings) with LayoutXDotty // includes layout computation
-    val result = layout.extendDottyGraphWithPositions(dottygraph)
+    val dottyresult = layout.extendDottyGraphWithPositions(dottygraph)
     val stream = new PrintWriter(new FileOutputStream(outfile))
-    stream.println(result.toString())
+    stream.println(dottyresult.toString())
     stream.close()
-    // println(result.toString())
+    // println(dottyresult.toString())
   }
 }

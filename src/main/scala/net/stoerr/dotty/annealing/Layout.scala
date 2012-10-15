@@ -8,7 +8,8 @@ case class Point(x: Int, y: Int) {
   def distance(p: Point): Double = math.sqrt((p.x - x) * (p.x - x) + (p.y - y) * (p.y - y))
 }
 
-case class LayoutSettings(var xdist: Double = 2, var ydist: Double = 1.5, var aspectratio: Double = math.sqrt(2), var freespace: Double = 1.3)
+/** Settings for the Layout process. aspectratio is width to height of the graph; if the width should be smaller than the height use values < 1. */
+case class LayoutSettings(var xdist: Double = 200, var ydist: Double = 100, var aspectratio: Double = math.sqrt(2), var freespace: Double = 2)
 
 /**
  * @author <a href="http://www.stoerr.net/">Hans-Peter Stoerr</a>
@@ -16,19 +17,19 @@ case class LayoutSettings(var xdist: Double = 2, var ydist: Double = 1.5, var as
  */
 class Layout(graph: UndirectedGraph, settings: LayoutSettings) {
 
-  val gridsize = math.sqrt(graph.size * settings.freespace).toInt
+  val xpoints = math.round(math.sqrt(graph.size * settings.freespace) * settings.ydist / settings.xdist * settings.aspectratio).toInt
+  val ypoints = math.round(math.sqrt(graph.size * settings.freespace) * settings.xdist / settings.ydist / settings.aspectratio).toInt
 
   val points = new ArrayBuffer[Point] {
-    for (i <- 0 until gridsize; j <- 0 until gridsize) this += Point(i, j)
+    for (i <- 0 until xpoints; j <- 0 until ypoints) this += Point(i, j)
   }
 
   val positions = new mutable.HashMap[String, Point]
   val contents = new mutable.HashMap[Point, String]
 
-  private def scale(p: Point): Point =
-    Point((settings.xdist / gridsize * (p.x + 0.5)).toInt, (settings.ydist / gridsize * (p.y + 0.5)).toInt)
+  private def scale(p: Point): (Double, Double) = ((settings.xdist * (p.x + 0.5)), (settings.ydist * (p.y + 0.5)))
 
-  def position(node: String): Point = scale(positions(node))
+  def position(node: String): (Double, Double) = scale(positions(node))
 
   protected val rnd = new Random(42)
 

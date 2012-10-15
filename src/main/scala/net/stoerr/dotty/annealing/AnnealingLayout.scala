@@ -14,30 +14,32 @@ class AnnealingLayout(graph: UndirectedGraph, settings: LayoutSettings) extends 
     neighborSumDistance(node, newpos, oldpos) - neighborSumDistance(node, oldpos, newpos)
 
   var relativeTime = 0.0
-  var strategy: AnnealingStrategy = // new EnergyIndependentAnnealing(0.1 / (graph.size * graph.size))
-    new EnergyDependentAnnealing(gridsize * graph.maxEdgesPerNode, 0.1)
+  var strategy: AnnealingStrategy = new EnergyIndependentAnnealing(0.05 / (graph.size * graph.size))
+  // new EnergyDependentAnnealing(math.max(xpoints, ypoints) * graph.maxEdgesPerNode, 0.01)
 
   def takeit(improvement: Double): Boolean = rnd.nextDouble() < strategy.admissionProbability(improvement, relativeTime)
 
-  val runseconds = 5
+  val runseconds = 10
+  val timestepMillis = 500
+  val runsteps = (runseconds * 1000) / timestepMillis
 
   {
     var swapsdone = true
-    for (i <- 1 to runseconds if swapsdone) {
+    for (i <- 1 to runsteps if swapsdone) {
       println(relativeTime)
-      println(strategy.asInstanceOf[EnergyDependentAnnealing].halftime(relativeTime))
-      swapsdone = runOneSecond()
-      relativeTime += 1.0 / runseconds
+      // println(strategy.asInstanceOf[EnergyDependentAnnealing].halftime(relativeTime))
+      swapsdone = runOneRound()
+      relativeTime += 1.0 / runsteps
     }
     strategy = new GreedyDescent
-    runOneSecond()
+    runOneRound()
   }
 
 
-  def runOneSecond(): Boolean = {
+  def runOneRound(): Boolean = {
     var swaps = 0
     val begin = System.currentTimeMillis()
-    while (System.currentTimeMillis() - begin < 1000) {
+    while (System.currentTimeMillis() - begin < timestepMillis) {
       val p1 = randompoint()
       val p2 = randompoint()
       (contents.get(p1), contents.get(p2)) match {

@@ -1,8 +1,6 @@
 Graph layout with simulated annealing as a processor for Dotty files (for GraphViz)
 ===================================================================================
 
-(In Progress - the layout works but no Dotty file reading yet.)
-
 This is a processor for Dotty files that uses the simulated annealing algorithm
 http://en.wikipedia.org/wiki/Simulated_annealing
 to layout a graph given as a dotty file that can then be rendered with GraphViz
@@ -27,3 +25,6 @@ reduces the probability that we are stuck in a local minimum where swapping of
 only two points does not reduce the edge length, but where there are much better
 solutions if we move more stuff around.
 
+
+Status: it works, but the graphs it produces are not looking too usable. :-(
+Still, it is an interesting study what can be done with scala with <100 LOC.

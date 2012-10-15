@@ -23,10 +23,10 @@ object DisplayGraph extends SimpleSwingApplication {
       override def paintComponent(g: Graphics2D) {
         super.paintComponent(g)
         for (node <- graph.nodes) {
-          val nodep = layout.position(node)
+          val (nodex, nodey) = layout.position(node)
           for (neighbor <- graph.neighbors(node)) {
-            val neighborp = layout.position(neighbor)
-            g.drawLine(nodep.x, nodep.y, neighborp.x, neighborp.y)
+            val (neighborx, neighbory) = layout.position(neighbor)
+            g.drawLine(nodex.toInt, nodey.toInt, neighborx.toInt, neighbory.toInt)
           }
         }
       }

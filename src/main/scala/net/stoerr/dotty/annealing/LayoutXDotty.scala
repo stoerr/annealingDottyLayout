@@ -10,18 +10,16 @@ import net.stoerr.dotty.parser.{NodeDef, DottyGraph}
 trait LayoutXDotty extends Layout {
 
   private def posattr(name: String) = {
-    val pos = position(name)
-    "pos" -> (pos.x + "," + pos.y)
+    val (x, y) = position(name)
+    "pos" -> (x + "," + y)
   }
-
-  val widthattr = "width" -> "2"
 
   def extendDottyGraphWithPositions(graph: DottyGraph): DottyGraph = {
     val existingnodedefs = graph.nodes map {
-      node => NodeDef(node.name, node.attrib + posattr(node.name) + widthattr)
+      node => NodeDef(node.name, node.attrib + posattr(node.name))
     }
     val newnodedefs = (positions.keySet -- graph.nodes.map(_.name)) map {
-      name => NodeDef(name, Map(posattr(name), widthattr))
+      name => NodeDef(name, Map(posattr(name)))
     }
     DottyGraph(graph.directed, graph.name, existingnodedefs ++ newnodedefs, graph.edges)
   }
