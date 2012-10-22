@@ -14,6 +14,8 @@ trait LayoutXDotty extends Layout {
     "pos" -> (x + "," + y)
   }
 
+  private def additionalAttributes = List(NodeDef("graph", Map("splines" -> "true")))
+
   def extendDottyGraphWithPositions(graph: DottyGraph): DottyGraph = {
     val existingnodedefs = graph.nodes map {
       node => NodeDef(node.name, node.attrib + posattr(node.name))
@@ -21,7 +23,7 @@ trait LayoutXDotty extends Layout {
     val newnodedefs = (positions.keySet -- graph.nodes.map(_.name)) map {
       name => NodeDef(name, Map(posattr(name)))
     }
-    DottyGraph(graph.directed, graph.name, existingnodedefs ++ newnodedefs, graph.edges)
+    DottyGraph(graph.directed, graph.name, existingnodedefs ++ newnodedefs ++ additionalAttributes, graph.edges)
   }
 
 }
